@@ -1,0 +1,52 @@
+name: Build and Release Soil Branch (.NET 4.8)
+
+on:
+  push:
+    branches:
+      - Soil
+
+jobs:
+  build:
+    runs-on: windows-latest # 使用 Windows 环境
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: Soil
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v1 # 设置 MSBuild 环境
+
+      - name: Restore NuGet packages
+        run: nuget restore # 恢复 NuGet 包
+
+      - name: Build the project
+        run: msbuild /p:Configuration=Release /p:Platform="Any CPU" # 使用 MSBuild 构建项目
+
+      - name: Publish the project
+        run: msbuild /p:Configuration=Release /p:Platform="Any CPU" /p:OutputPath=./publish # 发布项目到 ./publish 目录
+
+      - name: Zip the publish folder
+        run: Compress-Archive -Path ./publish/* -DestinationPath ./publish/Dalamud.Updater-Soil.zip # 将发布内容打包为 zip 文件
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0.0-Soil
+          release_name: Release v1.0.0 (Soil)
+          draft: false
+          prerelease: false
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/Dalamud.Updater-Soil.zip
+          asset_name: Dalamud.Updater-Soil.zip
+          asset_content_type: application/zip
