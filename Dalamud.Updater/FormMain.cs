@@ -130,7 +130,7 @@ namespace Dalamud.Updater
 
             string locationFullName = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
             Log.Error(locationFullName);
-            if (@"Roaming\XIVLauncherCN".EndsWith(locationFullName))
+            if (locationFullName.EndsWith(@"Roaming\XIVLauncherCN"))
             // if (true)
             {
                 Log.Error("在大喇嘛目录下运行");

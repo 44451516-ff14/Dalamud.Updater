@@ -73,10 +73,12 @@ jobs:
           cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\"
            .\MSBuild.exe $Env:GITHUB_WORKSPACE\Dalamud.Updater.sln /t:Build /p:Configuration=Release
       - name: Upload artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v1
         with:
-          name: Updater-artifact
-          path: Dalamud.Updater\bin\Release\net48
+          asset_name: Updater-artifact
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Dalamud.Updater\bin\Release\net48
+          asset_content_type: application/gzip
 
       - name: Create release
         id: create_release
@@ -84,12 +86,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.0.0-Soil
-          release_name: Release v1.0.0 (Soil)
-          draft: false
-          prerelease: false
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Updater-artifact.zip
-          asset_name: Updater-artifact.zip
+          asset_path: ./bin/azblogfilter.windows-amd64.zip
+          asset_name: azblogfilter.windows-amd64.zip
           asset_content_type: application/zip
-          assets: Updater-artifact.zip
