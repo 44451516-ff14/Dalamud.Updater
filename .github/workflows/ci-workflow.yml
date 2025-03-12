@@ -2,8 +2,10 @@ name: Build Updater
 on:
   workflow_dispatch:
   push:
+    tags:
+      - '**' # 监听所有 tag 事件
   pull_request:
-concurrency: 
+concurrency:
   group: build_xl-${{ github.ref }}
   cancel-in-progress: true
 
@@ -15,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Restore Nuget Packages
         run: dotnet restore -p:RestoreUseStaticGraphEvaluation=true
 
@@ -47,11 +49,9 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         shell: pwsh
         run: |
-          $srcDir = Join-Path $env:GITHUB_WORKSPACE "Dalamud.Updater\bin\Release\net48"
-          Compress-Archive -Path "$srcDir/*.exe", "$srcDir/*.pdb" -DestinationPath ./Dalamud.Updater.zip -Force
-
-      - name: Publish Release
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+          Write-Host "Create Zip package"
+          Compress-Archive -Force Dalamud.Updater\bin\Release\net48\Dalamud.Updater.exe .\Dalamud.Update  
+        if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
