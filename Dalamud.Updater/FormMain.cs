@@ -1,4 +1,3 @@
-using AutoUpdaterDotNET;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
