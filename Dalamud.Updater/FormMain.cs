@@ -121,7 +121,7 @@ namespace Dalamud.Updater
             InitLogging();
             InitializeComponent();
             InitializePIDCheck();
-            InitializeDeleteShit();
+            // InitializeDeleteShit();
             addonDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location);
             dalamudLoadingOverlay = new DalamudLoadingOverlay(this);
             dalamudLoadingOverlay.OnProgressBar += setProgressBar;
