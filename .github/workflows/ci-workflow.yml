@@ -50,8 +50,11 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Create Zip package"
-          Compress-Archive -Force Dalamud.Updater\bin\Release\net48\Dalamud.Updater.exe .\Dalamud.Update  
-        if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
+          $srcDir = Join-Path $env:GITHUB_WORKSPACE "Dalamud.Updater\bin\Release\net48"
+          Compress-Archive -Path "$srcDir/*.*" -DestinationPath ./Dalamud.Updater.zip -Force
+
+      - name: Publish Release
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
