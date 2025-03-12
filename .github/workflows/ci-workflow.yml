@@ -87,6 +87,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bin/azblogfilter.windows-amd64.zip
-          asset_name: azblogfilter.windows-amd64.zip
+          asset_path: Dalamud.Updater\bin\Release\net48
+          asset_name: Updater-artifact.zip
           asset_content_type: application/zip
