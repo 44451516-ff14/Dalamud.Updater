@@ -129,11 +129,11 @@ namespace Dalamud.Updater
             dalamudLoadingOverlay.OnStatusLabel += setStatus;
 
             string locationFullName = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
-            Log.Information(locationFullName);
+            Log.Error(locationFullName);
             if (@"Roaming\XIVLauncherCN".EndsWith(locationFullName))
             // if (true)
             {
-                Log.Information("在大喇嘛目录下运行");
+                Log.Error("在大喇嘛目录下运行");
 
                 
                 addonDirectory = new DirectoryInfo(Path.Combine(DalamudConst.ROAMINGPATH, "addon"));
@@ -143,7 +143,7 @@ namespace Dalamud.Updater
             }
             else
             {
-                Log.Information("在定义目录下运行");
+                Log.Error("在定义目录下运行");
                 addonDirectory = new DirectoryInfo(Path.Combine(locationFullName, "XIVLauncherCN", "addon"));
                 runtimeDirectory = new DirectoryInfo(Path.Combine(locationFullName, "XIVLauncherCN", "runtime"));
                 xivlauncherDirectory = new DirectoryInfo(Path.Combine(locationFullName, "XIVLauncherCN"));
