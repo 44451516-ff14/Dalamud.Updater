@@ -88,3 +88,7 @@ jobs:
           release_name: Release v1.0.0 (Soil)
           draft: false
           prerelease: false
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Updater-artifact.zip
+          asset_name: Updater-artifact.zip
+          asset_content_type: application/zip
