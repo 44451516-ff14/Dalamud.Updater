@@ -41,12 +41,18 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./publish/Dalamud.Updater-Soil.zip
-          asset_name: Dalamud.Updater-Soil.zip
-          asset_content_type: application/zip
+          tag_name: ${{ env.TAG }}
+          name: Release ${{ env.TAG }}
+          body: |
+            Automated Release
+            Build Date: ${{ env.TAG }} (UTC+8)
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
+          files: |
+            bin/Release/latest.7z
+            bin/Release/hashes.json
+          draft: false
+          prerelease: false
