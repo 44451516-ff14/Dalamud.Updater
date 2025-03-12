@@ -17,8 +17,7 @@ namespace XIVLauncher.Common.Dalamud
 {
     public class AssetManager
     {
-        private const string ASSET_STORE_URL = "https://aonyx.ffxiv.wang/Dalamud/Asset/Meta";
-
+        // private const string ASSET_STORE_URL = "https://aonyx.ffxiv.wang/Dalamud/Asset/Meta";
         internal class AssetInfo
         {
             public int Version { get; set; }
@@ -143,14 +142,14 @@ namespace XIVLauncher.Common.Dalamud
                     Log.Error(ex, "[DASSET] Could not copy from old asset: {0}", entry.FileName);
                 }
                 var maxRetryNumber = 5;
-                while (maxRetryNumber > 0) { 
+                while (maxRetryNumber > 0)
+                {
                     try
                     {
                         Log.Information("[DASSET] Downloading {0} to {1}...", entry.Url, entry.FileName);
 
                         var request = await client.GetAsync(entry.Url).ConfigureAwait(true);
-                        if (!entry.Url.Contains("aonyx.ffxiv.wang"))
-                            request.Headers.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36 Edg/130.0.0.0");
+                        request.Headers.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36 Edg/130.0.0.0");
                         request.EnsureSuccessStatusCode();
                         File.WriteAllBytes(newFilePath, await request.Content.ReadAsByteArrayAsync().ConfigureAwait(true));
                         isRefreshNeeded = true;
@@ -159,12 +158,13 @@ namespace XIVLauncher.Common.Dalamud
                     catch (Exception ex)
                     {
                         Log.Error(ex, "[DASSET] Could not download old asset: {0}", entry.FileName);
-                        if (entry.FileName == "UIRes/NotoSansCJKsc-Medium.otf") {
-                            maxRetryNumber= fontUrls.Count;
+                        if (entry.FileName == "UIRes/NotoSansCJKsc-Medium.otf")
+                        {
+                            maxRetryNumber = fontUrls.Count;
                             entry.Url = fontUrls.First();
                             fontUrls.RemoveAt(0);
                         }
-                        maxRetryNumber --;
+                        maxRetryNumber--;
                     }
                 }
             }
@@ -292,7 +292,7 @@ namespace XIVLauncher.Common.Dalamud
                 Log.Error(ex, "[DASSET] Could not read asset.ver");
             }
 
-            var remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(ASSET_STORE_URL));
+            var remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(DalamudConst.ASSET_STORE_URL));
 
             Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer.Version);
 
@@ -311,24 +311,6 @@ namespace XIVLauncher.Common.Dalamud
             catch (Exception e)
             {
                 Log.Error(e, "[DASSET] Could not write local asset version");
-            }
-        }
-
-        private static void CleanUpOld(DirectoryInfo baseDir, int version)
-        {
-            //if (GameHelpers.CheckIsGameOpen())
-            //    return;
-
-            var toDelete = Path.Combine(baseDir.FullName, version.ToString());
-
-            try
-            {
-                if (Directory.Exists(toDelete))
-                    Directory.Delete(toDelete, true);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Could not clean up old assets");
             }
         }
     }

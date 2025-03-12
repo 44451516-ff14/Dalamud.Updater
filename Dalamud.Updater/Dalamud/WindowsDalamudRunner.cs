@@ -29,7 +29,8 @@ public static class WindowsDalamudRunner
             $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}"
         };
 
-        if (safeMode) launchArguments.Add("--no-plugin");
+        if (safeMode) 
+            launchArguments.Add("--no-plugin");
 
         var psi = new ProcessStartInfo(runner.FullName) {
             Arguments = string.Join(" ", launchArguments),

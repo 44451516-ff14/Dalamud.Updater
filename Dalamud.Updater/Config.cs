@@ -17,6 +17,7 @@ namespace Dalamud.Updater
         public bool? AutoStart { get; set; } = null;
         public double? InjectDelaySeconds { get; set; } = null;
         public bool? SafeMode { get; set; } = null; 
+        public bool? 自动更新 { get; set; } = null; 
 
         private static readonly JsonSerializerSettings SerializerSettings = new()
         {
@@ -53,6 +54,7 @@ namespace Dalamud.Updater
                 AutoStart = false,
                 InjectDelaySeconds = 0,
                 SafeMode = false,
+                自动更新 = false,
             };
             //Log.Information(JsonConvert.SerializeObject(deserialized), SerializerSettings);
             deserialized.configPath = path;

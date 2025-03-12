@@ -47,20 +47,21 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DirectoryInfo addonDirectory;
         private readonly DirectoryInfo runtimeDirectory;
         private readonly DirectoryInfo assetDirectory;
+
         private readonly DirectoryInfo configDirectory;
         //private readonly IUniqueIdCache? cache;
-        public const string REMOTE_BASE = "https://aonyx.ffxiv.wang/";
-        public const string REMOTE_VERSION = REMOTE_BASE + "Dalamud/Release/VersionInfo?track=";
-        public const string REMOTE_DOTNET = REMOTE_BASE + "Dalamud/Release/Runtime/DotNet/{0}";
-        public const string REMOTE_DESKTOP = REMOTE_BASE + "Dalamud/Release/Runtime/WindowsDesktop/{0}";
+        // public const string REMOTE_BASE = "https://aonyx.ffxiv.wang/";
+        // public const string REMOTE_VERSION = REMOTE_BASE + "Dalamud/Release/VersionInfo?track=";
+
         private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(25);
         private static string onlineHash = string.Empty;
 
         private DownloadState _state;
+
         public DownloadState State
         {
             get { return _state; }
-            
+
             private set
             {
                 _state = value;
@@ -81,14 +82,14 @@ namespace XIVLauncher.Common.Dalamud
 
                 return runnerInternal;
             }
-            private set => runnerInternal = value;
+            set => runnerInternal = value;
         }
 
         public DirectoryInfo Runtime => this.runtimeDirectory;
 
         public FileInfo RunnerOverride { get; set; }
 
-        public DirectoryInfo AssetDirectory { get; private set; }
+        public DirectoryInfo AssetDirectory { get; set; }
 
         public IDalamudLoadingOverlay Overlay { get; set; }
 
@@ -130,14 +131,19 @@ namespace XIVLauncher.Common.Dalamud
         {
             Overlay.ReportProgress(size, downloaded, progress);
         }
+
         public delegate void UpdateEvent(DownloadState value);
+
         public event UpdateEvent OnUpdateEvent;
         private readonly static object Mutex = new object();
+
         public void Run()
         {
             //lock (Mutex)
             //{
-                Task.Run(async () =>
+            Task.Run
+            (
+                async () =>
                 {
                     var gameRunning = false;
                     while (true)
@@ -157,8 +163,11 @@ namespace XIVLauncher.Common.Dalamud
                                 }
                                 catch (Exception ex)
                                 {
-                                    Log.Error(ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries,
-                                              MAX_TRIES);
+                                    Log.Error
+                                    (
+                                        ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries,
+                                        MAX_TRIES
+                                    );
                                 }
                             }
 
@@ -174,13 +183,17 @@ namespace XIVLauncher.Common.Dalamud
                         await Task.Delay(TimeSpan.FromHours(6)).ConfigureAwait(false);
                         gameRunning = Process.GetProcessesByName("ffxiv_dx11").Any();
                     }
-                });
+                }
+            );
             //}
 
         }
 
         private static string GetBetaTrackName(DalamudSettings settings) =>
             string.IsNullOrEmpty(settings.DalamudBetaKind) ? "staging" : settings.DalamudBetaKind;
+
+
+
 
         private async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(DalamudSettings settings)
         {
@@ -196,7 +209,10 @@ namespace XIVLauncher.Common.Dalamud
 
             client.DefaultRequestHeaders.Add("User-Agent", $"Dalamud.Updater v{Assembly.GetExecutingAssembly().GetName().Version}");
 
-            var versionInfoJsonRelease = await client.GetStringAsync(REMOTE_VERSION + "release").ConfigureAwait(false);
+            var REMOTE_VERSION = "https://raw.githubusercontent.com/44451516-ff14/Dalamud.Updater.Action/refs/heads/main/version_info.json";
+
+            var versionInfoJsonRelease = await client.GetStringAsync(REMOTE_VERSION).ConfigureAwait(false);
+
 
             DalamudVersionInfo versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
 
@@ -269,8 +285,10 @@ namespace XIVLauncher.Common.Dalamud
                     return;
                 }
             }
+            //
 
-            if (remoteVersionInfo.RuntimeRequired || settings.DoDalamudRuntime)
+            // if (remoteVersionInfo.RuntimeRequired || settings.DoDalamudRuntime)
+            if (true)
             {
                 Log.Information("[DUPDATE] Now starting for .NET Runtime {0}", remoteVersionInfo.RuntimeVersion);
 
@@ -517,10 +535,8 @@ namespace XIVLauncher.Common.Dalamud
                 runtimePath.Create();
             }
 
-            var dotnetUrl = string.Format(REMOTE_DOTNET, version);
-            var desktopUrl = string.Format(REMOTE_DESKTOP, version);
-            //var dotnetUrl = $"https://dotnetcli.blob.core.windows.net/dotnet/Runtime/{version}/dotnet-runtime-{version}-win-x64.zip";
-            //var desktopUrl = $"https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/{version}/windowsdesktop-runtime-{version}-win-x64.zip";
+            var dotnetUrl = $"https://dotnetcli.blob.core.windows.net/dotnet/Runtime/{version}/dotnet-runtime-{version}-win-x64.zip";
+            var desktopUrl = $"https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/{version}/windowsdesktop-runtime-{version}-win-x64.zip";
 
             var downloadPath = GetTempFileName();
 

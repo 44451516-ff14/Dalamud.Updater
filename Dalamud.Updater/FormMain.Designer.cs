@@ -52,6 +52,7 @@ namespace Dalamud.Updater
             this.label1 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.checkBoxSafeMode = new System.Windows.Forms.CheckBox();
+            this.CheckBox自动更新 = new System.Windows.Forms.CheckBox();
             this.checkboxTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.delayFlowLayout = new System.Windows.Forms.FlowLayoutPanel();
             this.versionTableLayout = new System.Windows.Forms.TableLayoutPanel();
@@ -93,6 +94,7 @@ namespace Dalamud.Updater
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "加入QQ频道";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            this.linkLabel1.Visible = false;
             // 
             // checkBoxAutoInject
             // 
@@ -240,6 +242,21 @@ namespace Dalamud.Updater
             this.toolTip1.SetToolTip(this.checkBoxSafeMode, "禁用所有插件，以避免爆炸");
             this.checkBoxSafeMode.UseVisualStyleBackColor = true;
             this.checkBoxSafeMode.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            
+            // 
+            // checkBoxSafeMode
+            // 
+            this.CheckBox自动更新.AutoSize = true;
+            this.CheckBox自动更新.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CheckBox自动更新.Location = new System.Drawing.Point(3, 53);
+            this.CheckBox自动更新.Name = "自动更新";
+            this.CheckBox自动更新.Size = new System.Drawing.Size(237, 44);
+            this.CheckBox自动更新.TabIndex = 15;
+            this.CheckBox自动更新.Text = "自动更新";
+            // this.toolTip1.SetToolTip(this.CheckBox自动更新, "自动更新");
+            this.CheckBox自动更新.UseVisualStyleBackColor = true;
+            this.CheckBox自动更新.CheckedChanged += new System.EventHandler(this.自动更新_CheckedChanged);
+            
             // 
             // checkboxTableLayout
             // 
@@ -249,6 +266,7 @@ namespace Dalamud.Updater
             this.checkboxTableLayout.Controls.Add(this.checkBoxAutoStart, 0, 0);
             this.checkboxTableLayout.Controls.Add(this.checkBoxAutoInject, 1, 0);
             this.checkboxTableLayout.Controls.Add(this.checkBoxSafeMode, 0, 1);
+            this.checkboxTableLayout.Controls.Add(this.CheckBox自动更新, 1, 1);
             this.checkboxTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkboxTableLayout.Location = new System.Drawing.Point(5, 213);
             this.checkboxTableLayout.Margin = new System.Windows.Forms.Padding(5);
@@ -421,6 +439,7 @@ namespace Dalamud.Updater
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.CheckBox checkBoxSafeMode;
+        private System.Windows.Forms.CheckBox CheckBox自动更新;
         private System.Windows.Forms.TableLayoutPanel checkboxTableLayout;
         private System.Windows.Forms.FlowLayoutPanel delayFlowLayout;
         private System.Windows.Forms.TableLayoutPanel versionTableLayout;

@@ -8,8 +8,8 @@
     <Company>Bluefissure</Company>
     <Product>Dalamud.Updater</Product>
     <Copyright>Copyright © Bluefissure 2022</Copyright>
-    <AssemblyVersion>1.0.7.5</AssemblyVersion>
-    <FileVersion>1.0.7.5</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     </PropertyGroup>
   </Target>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
+<!--    <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />-->
     <PackageReference Include="Costura.Fody" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
