@@ -1,83 +1,33 @@
-name: Build Updater
-on:
-  workflow_dispatch:
-  push:
-  pull_request:
-concurrency: build_xl
-
 jobs:
-  build-release:
-    name: Build Release on Windows
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: windows-2022
-    steps:
-      #      - uses: nadock/verified_commits_check@f9b330e987c2e7121dfc0230e65cb5751ee5fac9
-      - uses: actions/checkout@v1
-      - name: Initialize Submodules
-        run: git submodule update --init --recursive
-      - name: Restore Nuget Packages
-        run: |
-          dotnet restore
-      - name: Define VERSION
-        run: |
-          $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
-          $env:REPO_NAME = $env:GITHUB_REPOSITORY -replace '.*/'
-          $env:BRANCH = $env:GITHUB_REF -replace '.*/'
-
-          ($env:REPO_NAME) >> VERSION
-          ($env:BRANCH) >> VERSION
-          ($env:COMMIT) >> VERSION
-      - name: Build DotNet4 for Release
-        run: |
-          cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\"
-           .\MSBuild.exe $Env:GITHUB_WORKSPACE\Dalamud.Updater.sln /t:Build /p:Configuration=Release
-
-      - name: Create package
-        shell: pwsh
-        run: |
-          Write-Host "Create Zip package"
-          Compress-Archive -Force Dalamud.Updater\bin\Release\net48\Dalamud.Updater.exe .\release.zip  # Recreate the release zip
-    
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: ./release.zip
-          name: Release ${{ github.ref }}
-          prerelease: true
-
   build:
     name: Build on Windows
     runs-on: windows-2022
     if: "!startsWith(github.ref, 'refs/tags/')"
     steps:
-      - uses: actions/checkout@v1
-      - name: Initialize Submodules
-        run: git submodule update --init --recursive
+      # ... 其他步骤保持不变 ...
 
-      - name: Restore Nuget Packages
-        run: |
-          dotnet restore
-      - name: Define VERSION
-        run: |
-          $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
-          $env:REPO_NAME = $env:GITHUB_REPOSITORY -replace '.*/'
-          $env:BRANCH = $env:GITHUB_REF -replace '.*/'
-
-          ($env:REPO_NAME) >> VERSION
-          ($env:BRANCH) >> VERSION
-          ($env:COMMIT) >> VERSION
       - name: Build DotNet4 Master
         run: |
           cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\"
-           .\MSBuild.exe $Env:GITHUB_WORKSPACE\Dalamud.Updater.sln /t:Build /p:Configuration=Release
+          .\MSBuild.exe $Env:GITHUB_WORKSPACE\Dalamud.Updater.sln /t:Build /p:Configuration=Release
+
+      # 新增步骤：生成 ZIP 文件
+      - name: Create Artifact Zip
+        shell: pwsh
+        run: |
+          $sourceDir = "Dalamud.Updater\bin\Release\net48"
+          $zipPath = "Updater-artifact.zip"
+          if (Test-Path $zipPath) { Remove-Item $zipPath }
+          Compress-Archive -Path $sourceDir\* -DestinationPath $zipPath
+
+      # 更新上传 Artifact 步骤
       - name: Upload artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: Updater-artifact
-          path: Dalamud.Updater\bin\Release\net48
-          
+          path: Updater-artifact.zip  # 指向新生成的 ZIP 文件
+
+      # 更新创建 Release 步骤
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -88,7 +38,6 @@ jobs:
           release_name: Release v1.0.0 (Soil)
           draft: false
           prerelease: false
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Updater-artifact.zip
-          asset_name: Updater-artifact.zip
-          asset_content_type: application/zip
+          # 确保 asset_path 正确指向 ZIP 文件
+          assets: |
+            Updater-artifact.zip
